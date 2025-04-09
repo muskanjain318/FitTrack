@@ -3,6 +3,8 @@
 import Sidebar from '../components/Sidebar';
 import DashboardCard from '../components/DashboardCard';
 import WeightChart from '../components/WeightChart';
+import WeightForm from '../components/WeightForm';
+
 import LogForm from '../components/LogForm';
 import MealForm from '../components/MealForm';
 import WorkoutForm from '../components/WorkoutForm';
@@ -25,7 +27,8 @@ export default function Home() {
           <DashboardCard title="Water (L)" value="2.5" />
         </div>
        
-        <WeightChart />
+        <WeightForm />
+      <WeightChart />
         <LogForm />
         <MealForm />
         <WorkoutForm/>
