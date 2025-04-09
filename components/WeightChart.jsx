@@ -1,45 +1,50 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from 'recharts';
 
-export default function WeightForm() {
-  const [weight, setWeight] = useState('');
+export default function WeightChart() {
+  const [weightData, setWeightData] = useState([]);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  useEffect(() => {
+    const storedData = JSON.parse(localStorage.getItem('weightTrend')) || [];
+    setWeightData(storedData);
+  }, []);
 
-    const currentDate = new Date().toISOString().split('T')[0];
-    const newEntry = { date: currentDate, weight: parseFloat(weight) };
-
-    const existingData = JSON.parse(localStorage.getItem('weightTrend')) || [];
-    const updatedData = [...existingData, newEntry];
-
-    localStorage.setItem('weightTrend', JSON.stringify(updatedData));
-    setWeight('');
-    window.location.reload(); // refresh to update chart
-  };
+  if (weightData.length === 0) {
+    return (
+      <p className="text-gray-500 text-sm mt-4">
+        No weight data available. Please add an entry.
+      </p>
+    );
+  }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="bg-white p-6 rounded-xl shadow-md mt-6 flex flex-col sm:flex-row gap-4 items-center"
-    >
-      <label className="text-sm font-medium text-gray-700">
-        Enter Weight (kg):
-      </label>
-      <input
-        type="number"
-        step="0.1"
-        value={weight}
-        onChange={(e) => setWeight(e.target.value)}
-        required
-        className="border border-gray-300 rounded-md p-2 w-full sm:w-40"
-      />
-      <button
-        type="submit"
-        className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md"
-      >
-        Add
-      </button>
-    </form>
+    <div className="bg-white p-6 rounded-xl shadow-md mt-6">
+      <h2 className="text-xl font-semibold mb-4">Weight Trend</h2>
+      <ResponsiveContainer width="100%" height={300}>
+        <LineChart data={weightData}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="date" />
+          <YAxis domain={['auto', 'auto']} />
+          <Tooltip />
+          <Line
+            type="monotone"
+            dataKey="weight"
+            stroke="#6366F1"
+            strokeWidth={2}
+            dot={{ r: 4 }}
+            activeDot={{ r: 6 }}
+          />
+        </LineChart>
+      </ResponsiveContainer>
+    </div>
   );
 }
